@@ -3,7 +3,13 @@ from rest_framework.decorators import api_view,parser_classes
 import json
 import base64
 from rest_framework.parsers import JSONParser
+from datetime import datetime
 
+class MyResponse(Response):
+    def __init__(self, data=None, status=None, template_name=None, headers=None, exception=False, content_type=None):
+        timestamp=datetime.timestamp(datetime.now())
+        data={**data,"timestamp":timestamp}
+        super().__init__(data, status, template_name, headers, exception, content_type)
 
 @api_view(['POST'])
 @parser_classes([JSONParser])
@@ -18,7 +24,7 @@ def file(request):
             f.close()
     except:
         pass
-    return Response({"status":"ok!"})
+    return MyResponse({"status":"ok!"})
 
 @api_view(['POST'])
 @parser_classes([JSONParser])
@@ -34,4 +40,4 @@ def chunk_file(request):
             f.close()
     except:
         pass
-    return Response({"status":"ok!","chunk_number_received":chunk_number})
+    return MyResponse({"status":"ok!","chunk_number_received":chunk_number})
