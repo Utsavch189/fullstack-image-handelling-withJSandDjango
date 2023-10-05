@@ -9,12 +9,29 @@ from rest_framework.parsers import JSONParser
 @parser_classes([JSONParser])
 def file(request):
     filename=request.data['filename']
+    username=request.data['username']
     fileObj=request.data['data'].split(',')[1]
     try:
         decoded_data=base64.b64decode((fileObj))
-        with open(f'media/{filename}','wb') as f:
+        with open(f'media/{username+filename}','wb') as f:
             f.write(decoded_data)
             f.close()
     except:
         pass
     return Response({"status":"ok!"})
+
+@api_view(['POST'])
+@parser_classes([JSONParser])
+def chunk_file(request):
+    filename=request.data['filename']
+    chunk_number=request.data['chunk_number']
+    username=request.data['username']
+    fileObj=request.data['data'].split(',')[1]
+    try:
+        decoded_data=base64.b64decode((fileObj))
+        with open(f'media/{username+filename}','ab') as f:
+            f.write(decoded_data)
+            f.close()
+    except:
+        pass
+    return Response({"status":"ok!","chunk_number_received":chunk_number})
